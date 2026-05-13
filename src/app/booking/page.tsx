@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Calendar, Check, Clock, MapPin, Tag } from "lucide-react";
+import { Calendar, Check, Clock, MapPin, Tag, Star, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +20,16 @@ interface Package {
   discountPrice?: number;
   temples: string[];
   includes: string[];
+}
+
+interface Pandit {
+  id: string;
+  name: string;
+  specialization: string;
+  experience: string;
+  rating: number;
+  reviewCount: number;
+  fee: number;
 }
 
 const packages: Record<string, Package> = {
@@ -97,10 +107,79 @@ const packages: Record<string, Package> = {
   },
 };
 
+const pandits: Record<string, Pandit> = {
+  "1": {
+    id: "1",
+    name: "Pandit Ram Sharma",
+    specialization: "Vedic Astrology",
+    experience: "25+ years",
+    rating: 4.9,
+    reviewCount: 1280,
+    fee: 2500,
+  },
+  "2": {
+    id: "2",
+    name: "Acharya Krishna Joshi",
+    specialization: "Kundali Matching",
+    experience: "20+ years",
+    rating: 4.8,
+    reviewCount: 950,
+    fee: 3000,
+  },
+  "3": {
+    id: "3",
+    name: "Guru Mahadev Bhatt",
+    specialization: "Graha Shanti & Rudrabhishek",
+    experience: "30+ years",
+    rating: 4.9,
+    reviewCount: 1540,
+    fee: 5000,
+  },
+  "4": {
+    id: "4",
+    name: "Pandit Suresh Adhikari",
+    specialization: "Temple Rituals",
+    experience: "18+ years",
+    rating: 4.7,
+    reviewCount: 720,
+    fee: 2000,
+  },
+  "5": {
+    id: "5",
+    name: "Acharya Binod Nepal",
+    specialization: "Marriage & Griha Pravesh Puja",
+    experience: "22+ years",
+    rating: 4.8,
+    reviewCount: 1100,
+    fee: 3500,
+  },
+  "6": {
+    id: "6",
+    name: "Pandit Gopal Prasad",
+    specialization: "Vedic Astrology & Remedial Puja",
+    experience: "28+ years",
+    rating: 4.9,
+    reviewCount: 1450,
+    fee: 4000,
+  },
+};
+
 function BookingForm() {
   const searchParams = useSearchParams();
-  const packageId = searchParams.get("package") || "1";
-  const pkg = packages[packageId as keyof typeof packages] || packages["1"];
+  const packageId = searchParams.get("package");
+  const panditId = searchParams.get("pandit");
+
+  // Determine what's being booked
+  const pkg = packageId
+    ? packages[packageId as keyof typeof packages] || null
+    : null;
+  const pandit = panditId
+    ? pandits[panditId as keyof typeof pandits] || null
+    : null;
+
+  // Default fallback to Kathmandu Sacred Tour if nothing matches
+  const defaultPkg = packages["1"];
+  const activePkg = pkg || defaultPkg;
 
   const [formData, setFormData] = useState({
     travelDate: "",
@@ -139,18 +218,22 @@ function BookingForm() {
                 <CardTitle>Your Details</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* Selected package banner */}
+                {/* Selected item banner */}
                 <div className="mb-6 p-4 bg-saffron/5 border border-saffron/20 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-bold text-foreground">{pkg.name}</h3>
+                      <h3 className="font-bold text-foreground">
+                        {pandit ? pandit.name : activePkg.name}
+                      </h3>
                       <p className="text-sm text-muted-foreground mt-1">
                         <Clock className="w-3 h-3 inline mr-1" />
-                        {pkg.duration} &bull; {pkg.category}
+                        {pandit
+                          ? `${pandit.specialization} • ${pandit.experience}`
+                          : `${activePkg.duration} • ${activePkg.category}`}
                       </p>
                     </div>
                     <Link href="/packages" className="text-sm text-saffron hover:underline">
-                      Change Package
+                      Change
                     </Link>
                   </div>
                 </div>
@@ -256,102 +339,213 @@ function BookingForm() {
             </Card>
           </div>
 
-          {/* Booking Summary — Now Dynamic */}
+          {/* Booking Summary */}
           <div>
             <Card className="sticky top-24">
               <CardHeader>
                 <CardTitle>Booking Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Package Name & Duration */}
-                <div>
-                  <p className="font-semibold text-lg">{pkg.name}</p>
-                  <p className="text-sm text-muted-foreground flex items-center mt-1">
-                    <Clock className="w-4 h-4 mr-1" />
-                    {pkg.duration}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                    <Tag className="w-3 h-3" />
-                    {pkg.category}
-                  </p>
-                </div>
+                {/* Pandit Mode */}
+                {pandit ? (
+                  <>
+                    {/* Pandit Info */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-saffron/20 flex items-center justify-center flex-shrink-0">
+                        <User className="w-5 h-5 text-saffron" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-lg">{pandit.name}</p>
+                        <p className="text-sm text-saffron">{pandit.specialization}</p>
+                      </div>
+                    </div>
 
-                {/* Temples Visited */}
-                <div>
-                  <p className="text-sm font-medium mb-1.5">Temples Visited</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {pkg.temples.map((temple) => (
-                      <span
-                        key={temple}
-                        className="bg-saffron/10 text-saffron text-xs px-2 py-1 rounded-full"
-                      >
-                        {temple}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                    {/* Pandit Details */}
+                    <div className="border-t pt-4 space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Experience</span>
+                        <span className="font-medium">{pandit.experience}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Rating</span>
+                        <div className="flex items-center gap-1">
+                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                          <span className="font-medium">{pandit.rating}</span>
+                          <span className="text-muted-foreground">
+                            ({pandit.reviewCount})
+                          </span>
+                        </div>
+                      </div>
+                    </div>
 
-                {/* Pricing */}
-                <div className="border-t pt-4 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Price per person</span>
-                    {pkg.discountPrice ? (
-                      <>
-                        <span className="text-muted-foreground line-through text-sm">
-                          NPR {pkg.price.toLocaleString()}
+                    {/* Price */}
+                    <div className="border-t pt-4 space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          Consultation Fee
                         </span>
-                        <span className="font-semibold text-saffron">
-                          NPR {pkg.discountPrice.toLocaleString()}
+                        <span className="font-semibold">
+                          NPR {pandit.fee.toLocaleString()}
                         </span>
-                      </>
-                    ) : (
-                      <span className="font-semibold">
-                        NPR {pkg.price.toLocaleString()}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Passengers</span>
-                    <span className="font-medium">
-                      {formData.passengers}
-                    </span>
-                  </div>
-                </div>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Passengers</span>
+                        <span className="font-medium">
+                          {formData.passengers}
+                        </span>
+                      </div>
+                    </div>
 
-{/* Total */}
-                 <div className="border-t pt-4">
-                   <div className="flex justify-between font-bold text-lg">
-                     <span>Total</span>
-                     <span className="text-saffron">
-                       NPR{' '}
-                       {((pkg.discountPrice || pkg.price) *
-                         parseInt(formData.passengers || '1')).toLocaleString()}
-                     </span>
-                   </div>
-                 </div>
+                    {/* Total */}
+                    <div className="border-t pt-4">
+                      <div className="flex justify-between font-bold text-lg">
+                        <span>Total</span>
+                        <span className="text-saffron">
+                          NPR{" "}
+                          {(pandit.fee *
+                            parseInt(formData.passengers || "1")).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
 
-                {/* Dynamic "Whats Included" — now driven by package data */}
-                <div className="bg-muted/50 p-4 rounded-lg">
-                  <p className="text-sm font-medium mb-2 flex items-center gap-1.5">
-                    <Check className="w-4 h-4 text-success" />
-                    What&apos;s Included
-                  </p>
-                  <ul className="text-sm space-y-1.5">
-                    {pkg.includes.map((item) => (
-                      <li key={item} className="flex items-center gap-2">
-                        <Check className="w-3.5 h-3.5 text-success shrink-0" />
-                        <span className="text-muted-foreground">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                    {/* Included */}
+                    <div className="bg-muted/50 p-4 rounded-lg">
+                      <p className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                        <Check className="w-4 h-4 text-success" />
+                        What&apos;s Included
+                      </p>
+                      <ul className="text-sm space-y-1.5">
+                        <li className="flex items-center gap-2">
+                          <Check className="w-3.5 h-3.5 text-success shrink-0" />
+                          <span className="text-muted-foreground">
+                            Online Video Consultation
+                          </span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="w-3.5 h-3.5 text-success shrink-0" />
+                          <span className="text-muted-foreground">
+                            Personalized Kundali Reading
+                          </span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="w-3.5 h-3.5 text-success shrink-0" />
+                          <span className="text-muted-foreground">
+                            Remedy & Puja Guidance
+                          </span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="w-3.5 h-3.5 text-success shrink-0" />
+                          <span className="text-muted-foreground">
+                            Follow-up Support
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                  </>
+) : (
+                  /* Package Mode */
+                  <>
+                    {/* Package Name & Duration */}
+                    <div>
+                      <p className="font-semibold text-lg">{activePkg.name}</p>
+                      <p className="text-sm text-muted-foreground flex items-center mt-1">
+                        <Clock className="w-4 h-4 mr-1" />
+                        {activePkg.duration}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                        <Tag className="w-3 h-3" />
+                        {activePkg.category}
+                      </p>
+                    </div>
 
-                {/* Description */}
-                <div className="bg-white/60 p-3 rounded-lg border border-border/50">
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    {pkg.description}
-                  </p>
-                </div>
+                    {/* Temples Visited */}
+                    <div>
+                      <p className="text-sm font-medium mb-1.5">
+                        Temples Visited
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {activePkg.temples.map((temple) => (
+                          <span
+                            key={temple}
+                            className="bg-saffron/10 text-saffron text-xs px-2 py-1 rounded-full"
+                          >
+                            {temple}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Pricing */}
+                    <div className="border-t pt-4 space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          Price per person
+                        </span>
+                        {activePkg.discountPrice ? (
+                          <>
+                            <span className="text-muted-foreground line-through text-sm">
+                              NPR {activePkg.price.toLocaleString()}
+                            </span>
+                            <span className="font-semibold text-saffron">
+                              NPR {activePkg.discountPrice.toLocaleString()}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="font-semibold">
+                            NPR {activePkg.price.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          Passengers
+                        </span>
+                        <span className="font-medium">
+                          {formData.passengers}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Total */}
+                    <div className="border-t pt-4">
+                      <div className="flex justify-between font-bold text-lg">
+                        <span>Total</span>
+                        <span className="text-saffron">
+                          NPR{" "}
+                          {(
+                            (activePkg.discountPrice || activePkg.price) *
+                            parseInt(formData.passengers || "1")
+                          ).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Whats Included */}
+                    <div className="bg-muted/50 p-4 rounded-lg">
+                      <p className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                        <Check className="w-4 h-4 text-success" />
+                        What&apos;s Included
+                      </p>
+                      <ul className="text-sm space-y-1.5">
+                        {activePkg.includes.map((item) => (
+                          <li key={item} className="flex items-center gap-2">
+                            <Check className="w-3.5 h-3.5 text-success shrink-0" />
+                            <span className="text-muted-foreground">
+                              {item}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Description */}
+                    <div className="bg-white/60 p-3 rounded-lg border border-border/50">
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {activePkg.description}
+                      </p>
+                    </div>
+                  </>
+                )}
 
                 <p className="text-xs text-muted-foreground text-center">
                   You won&apos;t be charged until we confirm your booking.

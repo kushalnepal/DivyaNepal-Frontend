@@ -44,7 +44,7 @@ export function PanditConsultationSection() {
             </p>
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
               <span className="text-saffron">Connect with</span> Verified{" "}
-              <span className="text-saffron">Online Pandits</span>
+              <span className="text-saffron">Online Astrologers</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Book online consultations for astrology, pujas, kundali matching, spiritual

@@ -128,7 +128,7 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-          <p className="text-2xl text-yellow-400 italic font-serif tracking-widest mb-2">अतिथि देवो भवः</p>
+          <p className="text-2xl text-yellow-400 italic font-serif tracking-widest mb-2">सर्वे भवन्तु सुखिनः</p>
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
             Your Spiritual Journey to Nepal
           </h1>
