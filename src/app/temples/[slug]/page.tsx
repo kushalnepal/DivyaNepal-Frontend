@@ -19,7 +19,7 @@ const DEMO_TEMPLES = [
   {
     id: "1",
     name: "Pashupatinath Temple",
-    slug: "pashupatinath-temple",
+    slug: "pashupatinath",
     description: "One of the oldest and most sacred Hindu temples dedicated to Lord Shiva, located on the banks of the Bagmati River in Kathmandu, Nepal. This UNESCO World Heritage Site dates back to 400 AD and is the most important temple of Lord Shiva in the world. The temple complex includes numerous smaller shrines, ashrams, and the sacred Bagmati River where devotees perform last rites.",
     history: "Pashupatinath Temple's origins trace back to the 5th century, with references found in ancient Nepali texts. The current pagoda-style temple was built during the Lichhavi dynasty. Over centuries, it has been renovated by Malla kings and later rulers. It is considered one of the most sacred temples for Hindus worldwide and serves as the seat of Nepal's Hindu religious leadership.",
     religiousSignificance: "Pashupatinath is one of the Paadal Petra Sthalams and is considered the most sacred abode of Lord Shiva in the Himalayan region. Devotees believe that worshipping here grants moksha (liberation from the cycle of birth and death). The temple is especially crowded during Maha Shivaratri, Teej, and Bala Chaturdashi festivals.",
@@ -48,7 +48,7 @@ const DEMO_TEMPLES = [
   {
     id: "2",
     name: "Swayambhunath Temple",
-    slug: "swayambhunath-temple",
+    slug: "swayambhunath",
     description: "The ancient Stupa of Swayambhunath, also known as the Monkey Temple, sits atop a hill in the Kathmandu Valley. This UNESCO World Heritage Site is one of the most sacred Buddhist pilgrimage sites in Nepal. The stupa's iconic white dome and gilded spire adorned with the all-seeing eyes of Buddha dominate the skyline. The complex includes monasteries, shrines, and a museum.",
     history: "According to legend, the valley was once a lake, and the Bodhisattva Manjushri cut a gorge to drain the water, revealing a lotus flower that transformed into the stupa. Historical records suggest it was built by King Vrsadeva around 460 AD. The stupa has been destroyed and rebuilt multiple times due to earthquakes and natural wear.",
     religiousSignificance: "For Buddhists, circumambulating the stupa with prayer wheels spinning is believed to accumulate merit. The five Dhyani Buddhas depicted on the structure represent the five qualities of enlightened mind. Hindus also revere this site, believing it to be self-created (swayambhu).",
@@ -77,7 +77,7 @@ const DEMO_TEMPLES = [
   {
     id: "3",
     name: "Boudhanath Stupa",
-    slug: "boudhanath-stupa",
+    slug: "boudhanath",
     description: "One of the largest spherical stupas in the world, Boudhanath is the spiritual heart of the Tibetan diaspora in Nepal. This UNESCO World Heritage Site features a massive mandala design and is surrounded by over 50 gompas (Tibetan monasteries). The air is filled with the sound of prayer flags and the scent of incense from countless butter lamps.",
     history: "The exact origins of Boudhanath are debated, but most scholars agree it was built sometime around the 5th or 6th century. After the Chinese invasion of Tibet in 1959, thousands of Tibetan refugees settled around Boudhanath, transforming it into one of the largest Tibetan communities outside Tibet. The stupa was severely damaged in the 2015 earthquake but has been meticulously restored.",
     religiousSignificance: "The stupa represents the mind of Buddha and is believed to contain relics of the Kassapa Buddha. Circumambulating (kora) the stupa while spinning prayer wheels and chanting mantras is a central practice. The structure embodies the Buddhist path to enlightenment with its 13 levels representing the stages to nirvana.",
@@ -135,7 +135,7 @@ const DEMO_TEMPLES = [
   {
     id: "5",
     name: "Muktinath Temple",
-    slug: "muktinath-temple",
+    slug: "muktinath",
     description: "Perched at an altitude of 3,800 meters at the foot of the Thorong La pass in the Mustang district, Muktinath is one of the most sacred temples for both Hindus and Buddhists. The temple complex features 108 water spouts shaped like bull heads (Nandi) from which ice-cold spring water flows continuously, believed to cleanse sins and grant salvation.",
     history: "Muktinath has been a place of worship for over 2,000 years. The temple was originally a Buddhist site before being adopted by Hindus. Ancient texts including the Vishnu Purana reference this sacred place. It became accessible to mainstream tourism after the opening of the Thorong La trekking route and the construction of the Jomsom airstrip.",
     religiousSignificance: "Hindus believe that visiting Muktinath and bathing under all 108 spouts grants mukti (salvation/freedom from the cycle of rebirth). The five-faced murti of Lord Vishnu here is considered self-manifested (swayambhu). For Buddhists, the site is associated with Guru Rinpoche (Padmasambhava) and represents the element of sky.",
