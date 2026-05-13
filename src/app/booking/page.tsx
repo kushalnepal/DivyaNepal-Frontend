@@ -7,11 +7,14 @@ import {
   Calendar,
   Check,
   Clock,
-  MapPin,
   Tag,
   Star,
   User,
   PhoneCall,
+  Moon,
+  Sun,
+  MapPin,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -834,7 +837,44 @@ function PackageBookingForm({
   );
 }
 
-// ============ MAIN PAGE (inside Suspense) ============
+// ============ BOOKING MODE TOGGLE ============
+
+function BookingModeToggle() {
+  const [mode, setMode] = useState<"astrologer" | "package">("astrologer");
+
+  return (
+    <div className="flex justify-center mb-8">
+      <div className="inline-flex bg-white rounded-xl p-1 shadow-md border border-border">
+        <button
+          onClick={() => setMode("astrologer")}
+          className={cn(
+            "px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center gap-2",
+            mode === "astrologer"
+              ? "bg-saffron text-white shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <User className="w-4 h-4" />
+          Online Astrologer
+        </button>
+        <button
+          onClick={() => setMode("package")}
+          className={cn(
+            "px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center gap-2",
+            mode === "package"
+              ? "bg-saffron text-white shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <MapPin className="w-4 h-4" />
+          Temple Packages
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============ MAIN BOOKING PAGE ============
 
 function BookingContent() {
   const searchParams = useSearchParams();
@@ -850,23 +890,165 @@ function BookingContent() {
 
   const defaultPkg = packages["1"];
 
-  return pandit ? (
-    <AstrologerBookingForm pandit={pandit} />
-  ) : (
-    <PackageBookingForm pkg={pkg} defaultPkg={defaultPkg} />
+  // If a specific item is in the URL, use it; otherwise let user pick via toggle
+  const hasUrlParam = !!pkg || !!pandit;
+
+  return (
+    <>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Toggle */}
+        <BookingModeToggle />
+
+        {hasUrlParam ? (
+          // Direct link: show the specific form
+          pandit ? (
+            <AstrologerBookingForm pandit={pandit} />
+          ) : pkg ? (
+            <PackageBookingForm pkg={pkg} defaultPkg={defaultPkg} />
+          ) : null
+        ) : (
+          // No URL param yet — show default + a "Featured" section
+          <div className="text-center py-12">
+            <h2 className="text-2xl md:text-3xl font-bold mb-3 text-foreground">
+              Choose Your Booking Type
+            </h2>
+            <p className="text-muted-foreground text-lg mb-10 max-w-xl mx-auto">
+              Book an online astrologer consultation or a guided temple
+              pilgrimage package
+            </p>
+
+            {/* Featured Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {/* Astrologer preview */}
+              <Card className="group hover:shadow-xl transition-shadow cursor-pointer">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-saffron to-gold rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-saffron/30">
+                    <User className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Online Astrologer</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    1-on-1 consultation with verified pandits — astrology, kundali
+                    matching, remedies, and spiritual guidance.
+                  </p>
+                  <Link href="/booking?pandit=1">
+                    <Button className="bg-saffron text-white hover:bg-saffron-dark">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Book Astrologer
+                    </Button>
+                  </Link>
+                  <div className="mt-3 flex items-center justify-center gap-2">
+                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm text-muted-foreground">
+                      4.9 avg rating • From NPR 2,500
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Package preview */}
+              <Card className="group hover:shadow-xl transition-shadow cursor-pointer">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-saffron/10 to-gold/10 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-saffron/30">
+                    <MapPin className="w-8 h-8 text-saffron" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Temple Packages</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Curated multi-day pilgrimage packages with AC stay,
+                    professional guides, and full meals.
+                  </p>
+                  <Link href="/booking?package=1">
+                    <Button className="bg-saffron text-white hover:bg-saffron-dark">
+                      <MapPin className="w-4 h-4 mr-2" />
+                      Explore Packages
+                    </Button>
+                  </Link>
+                  <div className="mt-3 flex items-center justify-center gap-2">
+                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm text-muted-foreground">
+                      6 packages • NPR 9,999 – 45,000
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Quick peek at top astrologers */}
+            <div className="mt-16">
+              <h3 className="text-xl font-bold mb-6 text-center">
+                <span className="text-saffron">Top Astrologers</span> Available
+                Now
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[
+                  { id: "1", name: "Pandit Ram Sharma", spec: "Vedic Astrology", fee: 2500, rating: 4.9, online: true },
+                  { id: "2", name: "Acharya Krishna Joshi", spec: "Kundali Matching", fee: 3000, rating: 4.8, online: true },
+                  { id: "3", name: "Guru Mahadev Bhatt", spec: "Graha Shanti", fee: 5000, rating: 4.9, online: true },
+                ].map((p) => (
+                  <Link key={p.id} href={`/booking?pandit=${p.id}`}>
+                    <Card className="hover:shadow-lg transition-shadow p-4 text-center">
+                      <div className="w-14 h-14 rounded-full bg-saffron/20 flex items-center justify-center mx-auto mb-3">
+                        <User className="w-6 h-6 text-saffron" />
+                      </div>
+                      <h4 className="font-semibold">{p.name}</h4>
+                      <p className="text-xs text-saffron">{p.spec}</p>
+                      <div className="flex items-center justify-center gap-1 mt-1">
+                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm">{p.rating}</span>
+                      </div>
+                      <p className="text-sm font-medium mt-1">
+                        NPR {p.fee.toLocaleString()}
+                      </p>
+                      {p.online && (
+                        <span className="inline-flex items-center gap-1 text-xs text-emerald-600 mt-1">
+                          <span className="w-2 h-2 rounded-full bg-green-500 animate-ping" />
+                          Online
+                        </span>
+                      )}
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+              <div className="text-center mt-6">
+                <Link href="/">
+                  <Button variant="outline">
+                    View All Astrologers
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
 export default function BookingPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-cream flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-saffron"></div>
+    <div className="min-h-screen bg-cream">
+      {/* Hero — shared for both modes */}
+      <section className="bg-gradient-to-r from-saffron to-gold py-12">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Book Your Spiritual Journey
+          </h1>
+          <p className="text-white/90 max-w-2xl mx-auto">
+            Whether you seek divine guidance or a sacred pilgrimage, we have
+            you covered
+          </p>
         </div>
-      }
-    >
-      <BookingContent />
-    </Suspense>
+      </section>
+
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-saffron"></div>
+          </div>
+        }
+      >
+        <BookingContent />
+      </Suspense>
+    </div>
   );
 }
