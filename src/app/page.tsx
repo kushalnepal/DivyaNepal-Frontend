@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { TempleCard } from "@/components/temples/temple-card";
+import { PanditConsultationSection } from "@/components/pandits/PanditConsultationSection";
 
 const featuredTemples = [
   {
@@ -154,10 +155,13 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+</section>
 
-      {/* Features */}
-      <section className="py-16 bg-white">
+       {/* Online Pandit Consultation */}
+       <PanditConsultationSection />
+
+       {/* Features */}
+       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {features.map((feature, index) => (
