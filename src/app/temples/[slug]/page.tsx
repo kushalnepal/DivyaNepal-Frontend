@@ -22,6 +22,14 @@ export default function TemplePage({ params }: TemplePageProps) {
 
   useEffect(() => {
     async function fetchTemple() {
+      // Validate slug format: must be lowercase, hyphen-separated, no special chars
+      const slugRegex = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+      if (!slug || !slugRegex.test(slug)) {
+        setError("Invalid temple slug");
+        setLoading(false);
+        return;
+      }
+
       try {
         const data = await api.temples.get(slug);
         setTemple(data);
@@ -36,7 +44,7 @@ export default function TemplePage({ params }: TemplePageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-cream">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-saffron"></div>
       </div>
     );
@@ -44,12 +52,23 @@ export default function TemplePage({ params }: TemplePageProps) {
 
   if (error || !temple) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold mb-4">Temple not found</h1>
-        <p className="text-muted-foreground mb-4">{error || "This temple does not exist"}</p>
-        <Link href="/temples">
-          <Button>Browse All Temples</Button>
-        </Link>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-cream py-20 px-4">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-6">🕉️</div>
+          <h1 className="text-2xl md:text-3xl font-bold mb-3 text-foreground">
+            Temple Not Found
+          </h1>
+          <p className="text-muted-foreground mb-6 leading-relaxed">
+            The temple you are looking for does not exist. It may have been
+            removed or the URL might be incorrect.
+          </p>
+          <Link href="/temples">
+            <Button size="lg" className="bg-saffron text-white hover:bg-saffron-dark">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Explore Temples
+            </Button>
+          </Link>
+        </div>
       </div>
     );
   }
@@ -77,14 +96,22 @@ export default function TemplePage({ params }: TemplePageProps) {
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center gap-2 mb-2">
               {temple.isFeatured && (
-                <span className="bg-saffron px-2 py-1 text-xs font-semibold text-white">Featured</span>
+                <span className="bg-saffron px-2 py-1 text-xs font-semibold text-white rounded">
+                  Featured
+                </span>
               )}
               {temple.isVerified && (
-                <span className="bg-green-600 px-2 py-1 text-xs font-semibold text-white">Verified</span>
+                <span className="bg-emerald-600 px-2 py-1 text-xs font-semibold text-white rounded">
+                  ✓ Verified
+                </span>
               )}
-              <span className="bg-brown/80 px-2 py-1 text-xs font-semibold text-white">{temple.type}</span>
+              <span className="bg-brown/80 px-2 py-1 text-xs font-semibold text-white rounded">
+                {temple.type}
+              </span>
             </div>
-            <h1 className="text-4xl font-bold text-white mb-2">{temple.name}</h1>
+            <h1 className="text-4xl font-bold text-white mb-2">
+              {temple.name}
+            </h1>
             <div className="flex items-center text-white/90">
               <MapPin className="w-5 h-5 mr-2" />
               {temple.city}, {temple.district}, {temple.region}
@@ -99,7 +126,9 @@ export default function TemplePage({ params }: TemplePageProps) {
             <Card>
               <CardContent className="pt-6">
                 <h2 className="text-2xl font-bold mb-4">About</h2>
-                <p className="text-muted-foreground whitespace-pre-line">{temple.description}</p>
+                <p className="text-muted-foreground whitespace-pre-line">
+                  {temple.description}
+                </p>
               </CardContent>
             </Card>
 
@@ -107,7 +136,9 @@ export default function TemplePage({ params }: TemplePageProps) {
               <Card>
                 <CardContent className="pt-6">
                   <h2 className="text-2xl font-bold mb-4">History</h2>
-                  <p className="text-muted-foreground whitespace-pre-line">{temple.history}</p>
+                  <p className="text-muted-foreground whitespace-pre-line">
+                    {temple.history}
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -115,8 +146,12 @@ export default function TemplePage({ params }: TemplePageProps) {
             {temple.religiousSignificance && (
               <Card>
                 <CardContent className="pt-6">
-                  <h2 className="text-2xl font-bold mb-4">Religious Significance</h2>
-                  <p className="text-muted-foreground whitespace-pre-line">{temple.religiousSignificance}</p>
+                  <h2 className="text-2xl font-bold mb-4">
+                    Religious Significance
+                  </h2>
+                  <p className="text-muted-foreground whitespace-pre-line">
+                    {temple.religiousSignificance}
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -128,9 +163,13 @@ export default function TemplePage({ params }: TemplePageProps) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    <span className="ml-1 font-semibold">{temple.rating?.toFixed(1)}</span>
+                    <span className="ml-1 font-semibold">
+                      {temple.rating?.toFixed(1)}
+                    </span>
                   </div>
-                  <span className="text-muted-foreground">({temple.reviewCount} reviews)</span>
+                  <span className="text-muted-foreground">
+                    ({temple.reviewCount} reviews)
+                  </span>
                 </div>
 
                 {temple.mainDeity && (
@@ -157,14 +196,24 @@ export default function TemplePage({ params }: TemplePageProps) {
                 {temple.phone && (
                   <div className="flex items-center">
                     <Phone className="w-5 h-5 mr-2 text-muted-foreground" />
-                    <a href={`tel:${temple.phone}`} className="hover:text-saffron">{temple.phone}</a>
+                    <a
+                      href={`tel:${temple.phone}`}
+                      className="hover:text-saffron"
+                    >
+                      {temple.phone}
+                    </a>
                   </div>
                 )}
 
                 {temple.website && (
                   <div className="flex items-center">
                     <Globe className="w-5 h-5 mr-2 text-muted-foreground" />
-                    <a href={temple.website} target="_blank" rel="noopener noreferrer" className="hover:text-saffron">
+                    <a
+                      href={temple.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-saffron"
+                    >
                       Visit Website
                     </a>
                   </div>
@@ -175,7 +224,7 @@ export default function TemplePage({ params }: TemplePageProps) {
             <Card>
               <CardContent className="pt-6 space-y-4">
                 <Link href={`/booking?temple=${temple.id}`} className="block">
-                  <Button className="w-full">
+                  <Button className="w-full bg-saffron text-white hover:bg-saffron-dark">
                     <Calendar className="w-4 h-4 mr-2" />
                     Book Puja
                   </Button>
