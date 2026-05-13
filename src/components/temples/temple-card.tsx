@@ -77,15 +77,14 @@ export function TempleCard({ temple }: TempleCardProps) {
           </span>
         </div>
 
-        {/* "View Details" Button — Spiritual Styling */}
+        {/* "View Details" Button — Solid Orange */}
         <Link href={`/temples/${temple.slug}`} passHref>
           <Button
             size="sm"
             className="
               relative overflow-hidden
-              bg-gradient-to-r from-saffron to-gold
-              text-white font-semibold
-              hover:from-saffron-dark hover:to-saffron
+              bg-saffron text-white
+              hover:bg-saffron-dark
               transition-all duration-300
               hover:shadow-lg hover:shadow-saffron/30
               hover:scale-105
