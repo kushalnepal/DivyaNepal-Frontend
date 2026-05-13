@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Calendar, Check, Clock, MapPin, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -97,9 +98,7 @@ const packages: Record<string, Package> = {
 };
 
 function BookingForm() {
-  const searchParams = new URLSearchParams(
-    typeof window !== "undefined" ? window.location.search : ""
-  );
+  const searchParams = useSearchParams();
   const packageId = searchParams.get("package") || "1";
   const pkg = packages[packageId as keyof typeof packages] || packages["1"];
 
@@ -319,19 +318,17 @@ function BookingForm() {
                   </div>
                 </div>
 
-                {/* Total */}
-                <div className="border-t pt-4">
-                  <div className="flex justify-between font-bold text-lg">
-                    <span>Total</span>
-                    <span className="text-saffron">
-                      NPR
-                      {(pkg.discountPrice
-                        ? pkg.discountPrice
-                        : pkg.price *
-                          parseInt(formData.passengers || "1")).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
+{/* Total */}
+                 <div className="border-t pt-4">
+                   <div className="flex justify-between font-bold text-lg">
+                     <span>Total</span>
+                     <span className="text-saffron">
+                       NPR{' '}
+                       {((pkg.discountPrice || pkg.price) *
+                         parseInt(formData.passengers || '1')).toLocaleString()}
+                     </span>
+                   </div>
+                 </div>
 
                 {/* Dynamic "Whats Included" — now driven by package data */}
                 <div className="bg-muted/50 p-4 rounded-lg">
