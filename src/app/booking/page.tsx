@@ -1,13 +1,29 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Calendar, Check, Clock, MapPin, Tag, Star, User } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import {
+  Calendar,
+  Check,
+  Clock,
+  MapPin,
+  Tag,
+  Star,
+  User,
+  PhoneCall,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+
+// ============ DATA ============
 
 interface Package {
   id: string;
@@ -37,7 +53,8 @@ const packages: Record<string, Package> = {
     id: "1",
     name: "Kathmandu Sacred Tour",
     slug: "kathmandu-sacred-tour",
-    description: "Explore the spiritual heart of Kathmandu with visits to Pashupatinath, Swayambhunath, and Boudhanath.",
+    description:
+      "Explore the spiritual heart of Kathmandu with visits to Pashupatinath, Swayambhunath, and Boudhanath.",
     duration: "3 Days 2 Nights",
     price: 15000,
     discountPrice: 12500,
@@ -49,7 +66,8 @@ const packages: Record<string, Package> = {
     id: "2",
     name: "Lumbini Pilgrimage",
     slug: "lumbini-pilgrimage",
-    description: "Journey to the birthplace of Lord Buddha and explore the sacred gardens of Lumbini.",
+    description:
+      "Journey to the birthplace of Lord Buddha and explore the sacred gardens of Lumbini.",
     duration: "4 Days 3 Nights",
     price: 25000,
     discountPrice: 22000,
@@ -61,7 +79,8 @@ const packages: Record<string, Package> = {
     id: "3",
     name: "Muktinath Holy Journey",
     slug: "muktinath-holy-journey",
-    description: "A transformative journey to the sacred Muktinath temple in the Himalayas.",
+    description:
+      "A transformative journey to the sacred Muktinath temple in the Himalayas.",
     duration: "6 Days 5 Nights",
     price: 45000,
     discountPrice: 39999,
@@ -73,7 +92,8 @@ const packages: Record<string, Package> = {
     id: "4",
     name: "Janakpur & Mithila Tour",
     slug: "janakpur-mithila-tour",
-    description: "Explore the land of Goddess Sita and discover Mithila culture.",
+    description:
+      "Explore the land of Goddess Sita and discover Mithila culture.",
     duration: "3 Days 2 Nights",
     price: 12000,
     discountPrice: 9999,
@@ -85,7 +105,8 @@ const packages: Record<string, Package> = {
     id: "5",
     name: "Hindu Golden Triangle",
     slug: "hindu-golden-triangle",
-    description: "Visit the most sacred Hindu temples across three major regions.",
+    description:
+      "Visit the most sacred Hindu temples across three major regions.",
     duration: "5 Days 4 Nights",
     price: 35000,
     discountPrice: 29999,
@@ -164,23 +185,373 @@ const pandits: Record<string, Pandit> = {
   },
 };
 
-function BookingForm() {
-  const searchParams = useSearchParams();
-  const packageId = searchParams.get("package");
-  const panditId = searchParams.get("pandit");
+// ============ ASTROLOGER BOOKING FORM ============
 
-  // Determine what's being booked
-  const pkg = packageId
-    ? packages[packageId as keyof typeof packages] || null
-    : null;
-  const pandit = panditId
-    ? pandits[panditId as keyof typeof pandits] || null
-    : null;
+function AstrologerBookingForm({ pandit }: { pandit: Pandit }) {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    consultationDate: "",
+    preferredTime: "morning",
+    consultationType: "video",
+    questions: "",
+  });
 
-  // Default fallback to Kathmandu Sacred Tour if nothing matches
-  const defaultPkg = packages["1"];
+  const consultationTypes = [
+    { value: "video", label: "📹 Video Call" },
+    { value: "chat", label: "💬 Chat / Text" },
+    { value: "phone", label: "📞 Phone Call" },
+  ];
+
+  const timeSlots = [
+    { value: "morning", label: "🌅 Morning (6 AM - 12 PM)" },
+    { value: "afternoon", label: "☀️ Afternoon (12 PM - 5 PM)" },
+    { value: "evening", label: "🌙 Evening (5 PM - 9 PM)" },
+  ];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Astrologer booking submitted:", { pandit, ...formData });
+  };
+
+  return (
+    <div className="min-h-screen bg-cream">
+      {/* Hero */}
+      <section className="bg-gradient-to-r from-saffron to-gold py-12">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Book Consultation with {pandit.name}
+          </h1>
+          <p className="text-white/90 max-w-2xl mx-auto">
+            Connect with our verified astrologer for personalized spiritual
+            guidance
+          </p>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left: Booking Form */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  <div className="flex items-center gap-2">
+                    <User className="w-5 h-5 text-saffron" />
+                    Consultation Details
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {/* Pandit Banner */}
+                <div className="mb-6 p-4 bg-saffron/5 border border-saffron/20 rounded-lg flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-full bg-saffron/20 flex items-center justify-center flex-shrink-0">
+                    <User className="w-6 h-6 text-saffron" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-foreground">
+                      {pandit.name}
+                    </h3>
+                    <p className="text-sm text-saffron">
+                      {pandit.specialization}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {pandit.experience} experience &bull; {pandit.rating}{" "}
+                      ★ ({pandit.reviewCount} reviews)
+                    </p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Personal Info */}
+                  <div>
+                    <h3 className="text-sm font-semibold mb-3 flex items-center gap-1.5">
+                      <User className="w-4 h-4 text-saffron" />
+                      Your Information
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">
+                          Full Name *
+                        </label>
+                        <Input
+                          placeholder="Your full name"
+                          value={formData.fullName}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              fullName: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">
+                          Email *
+                        </label>
+                        <Input
+                          type="email"
+                          placeholder="your@email.com"
+                          value={formData.email}
+                          onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                          }
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <label className="text-sm font-medium mb-1.5 block">
+                        Phone Number *
+                      </label>
+                      <Input
+                        type="tel"
+                        placeholder="+977 98XXXXXXXX"
+                        value={formData.phone}
+                        onChange={(e) =>
+                          setFormData({ ...formData, phone: e.target.value })
+                        }
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="border-t pt-4" />
+
+                  {/* Consultation Schedule */}
+                  <div>
+                    <h3 className="text-sm font-semibold mb-3 flex items-center gap-1.5">
+                      <Calendar className="w-4 h-4 text-saffron" />
+                      Consultation Schedule
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">
+                          Preferred Date *
+                        </label>
+                        <Input
+                          type="date"
+                          value={formData.consultationDate}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              consultationDate: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">
+                          Preferred Time *
+                        </label>
+                        <select
+                          value={formData.preferredTime}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              preferredTime: e.target.value,
+                            })
+                          }
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        >
+                          {timeSlots.map((slot) => (
+                            <option key={slot.value} value={slot.value}>
+                              {slot.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <label className="text-sm font-medium mb-1.5 block">
+                        Consultation Type *
+                      </label>
+                      <select
+                        value={formData.consultationType}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            consultationType: e.target.value,
+                          })
+                        }
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      >
+                        {consultationTypes.map((type) => (
+                          <option key={type.value} value={type.value}>
+                            {type.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="border-t pt-4">
+                    <label className="text-sm font-medium mb-1.5 block">
+                      Questions or Topics (optional)
+                    </label>
+                    <textarea
+                      className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      placeholder="Mention specific questions about your kundali, marriage, career, etc."
+                      value={formData.questions}
+                      onChange={(e) =>
+                        setFormData({ ...formData, questions: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <Button type="submit" size="lg" className="w-full">
+                    <PhoneCall className="w-4 h-4 mr-2" />
+                    Confirm Astrologer Consultation
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right: Summary */}
+          <div>
+            <Card className="sticky top-24">
+              <CardHeader>
+                <CardTitle>Consultation Summary</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-saffron/20 flex items-center justify-center flex-shrink-0">
+                    <User className="w-5 h-5 text-saffron" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-lg">{pandit.name}</p>
+                    <p className="text-sm text-saffron">
+                      {pandit.specialization}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="border-t pt-3" />
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Experience</span>
+                    <span className="font-medium">{pandit.experience}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Rating</span>
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-medium">{pandit.rating}</span>
+                      <span className="text-muted-foreground">
+                        ({pandit.reviewCount})
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t pt-3" />
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      Consultation Fee
+                    </span>
+                    <span className="font-bold text-saffron">
+                      NPR {pandit.fee.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      Consultation Type
+                    </span>
+                    <span className="font-medium capitalize">
+                      {formData.consultationType === "video"
+                        ? "Video Call"
+                        : formData.consultationType === "chat"
+                        ? "Chat / Text"
+                        : "Phone Call"}
+                    </span>
+                  </div>
+                  {formData.consultationDate && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Date</span>
+                      <span className="font-medium">
+                        {new Date(
+                          formData.consultationDate + "T00:00:00"
+                        ).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="border-t pt-3" />
+
+                <div className="flex justify-between font-bold text-lg">
+                  <span>Total</span>
+                  <span className="text-saffron">
+                    NPR {pandit.fee.toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <p className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-success" />
+                    What&apos;s Included
+                  </p>
+                  <ul className="text-sm space-y-1.5">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-success shrink-0" />
+                      <span className="text-muted-foreground">
+                        1-on-1 Personalized Session
+                      </span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-success shrink-0" />
+                      <span className="text-muted-foreground">
+                        Kundali Analysis & Reading
+                      </span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-success shrink-0" />
+                      <span className="text-muted-foreground">
+                        Gemstone & Remedy Guidance
+                      </span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-success shrink-0" />
+                      <span className="text-muted-foreground">
+                        7 Days Follow-up Support
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                <p className="text-xs text-muted-foreground text-center">
+                  You won&apos;t be charged until the pandit confirms.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============ PACKAGE BOOKING FORM ============
+
+function PackageBookingForm({
+  pkg,
+  defaultPkg,
+}: {
+  pkg: Package | null;
+  defaultPkg: Package;
+}) {
   const activePkg = pkg || defaultPkg;
-
   const [formData, setFormData] = useState({
     travelDate: "",
     passengers: "1",
@@ -198,12 +569,12 @@ function BookingForm() {
   return (
     <div className="min-h-screen bg-cream">
       {/* Hero */}
-      <section className="bg-saffron py-12">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="bg-gradient-to-r from-saffron to-gold py-12">
+        <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Book Your Spiritual Journey
           </h1>
-          <p className="text-white/90 max-w-2xl">
+          <p className="text-white/90 max-w-2xl mx-auto">
             Fill in the details below and we&apos;ll confirm your booking shortly
           </p>
         </div>
@@ -211,50 +582,54 @@ function BookingForm() {
 
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Booking Form */}
+          {/* Left: Booking Form */}
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle>Your Details</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {/* Selected item banner */}
-                <div className="mb-6 p-4 bg-saffron/5 border border-saffron/20 rounded-lg">
+                <CardTitle>
                   <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-bold text-foreground">
-                        {pandit ? pandit.name : activePkg.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        <Clock className="w-3 h-3 inline mr-1" />
-                        {pandit
-                          ? `${pandit.specialization} • ${pandit.experience}`
-                          : `${activePkg.duration} • ${activePkg.category}`}
-                      </p>
-                    </div>
-                    <Link href="/packages" className="text-sm text-saffron hover:underline">
-                      Change
+                    <span>Your Details</span>
+                    <Link
+                      href="/packages"
+                      className="text-sm text-saffron hover:underline"
+                    >
+                      Change Package
                     </Link>
                   </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {/* Selected Package Banner */}
+                <div className="mb-6 p-4 bg-saffron/5 border border-saffron/20 rounded-lg">
+                  <h3 className="font-bold text-foreground">
+                    {activePkg.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    <Clock className="w-3 h-3 inline mr-1" />
+                    {activePkg.duration} &bull; {activePkg.category}
+                  </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium mb-2 block">
+                      <label className="text-sm font-medium mb-1.5 block">
                         Travel Date *
                       </label>
                       <Input
                         type="date"
                         value={formData.travelDate}
                         onChange={(e) =>
-                          setFormData({ ...formData, travelDate: e.target.value })
+                          setFormData({
+                            ...formData,
+                            travelDate: e.target.value,
+                          })
                         }
                         required
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium mb-2 block">
+                      <label className="text-sm font-medium mb-1.5 block">
                         Number of Passengers *
                       </label>
                       <Input
@@ -263,7 +638,10 @@ function BookingForm() {
                         max="10"
                         value={formData.passengers}
                         onChange={(e) =>
-                          setFormData({ ...formData, passengers: e.target.value })
+                          setFormData({
+                            ...formData,
+                            passengers: e.target.value,
+                          })
                         }
                         required
                       />
@@ -274,20 +652,23 @@ function BookingForm() {
                     <h3 className="font-semibold mb-4">Traveler Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium mb-2 block">
+                        <label className="text-sm font-medium mb-1.5 block">
                           Full Name *
                         </label>
                         <Input
                           placeholder="As per passport"
                           value={formData.guestName}
                           onChange={(e) =>
-                            setFormData({ ...formData, guestName: e.target.value })
+                            setFormData({
+                              ...formData,
+                              guestName: e.target.value,
+                            })
                           }
                           required
                         />
                       </div>
                       <div>
-                        <label className="text-sm font-medium mb-2 block">
+                        <label className="text-sm font-medium mb-1.5 block">
                           Email *
                         </label>
                         <Input
@@ -295,14 +676,17 @@ function BookingForm() {
                           placeholder="your@email.com"
                           value={formData.guestEmail}
                           onChange={(e) =>
-                            setFormData({ ...formData, guestEmail: e.target.value })
+                            setFormData({
+                              ...formData,
+                              guestEmail: e.target.value,
+                            })
                           }
                           required
                         />
                       </div>
                     </div>
                     <div className="mt-4">
-                      <label className="text-sm font-medium mb-2 block">
+                      <label className="text-sm font-medium mb-1.5 block">
                         Phone Number *
                       </label>
                       <Input
@@ -310,7 +694,10 @@ function BookingForm() {
                         placeholder="+977 98XXXXXXXX"
                         value={formData.guestPhone}
                         onChange={(e) =>
-                          setFormData({ ...formData, guestPhone: e.target.value })
+                          setFormData({
+                            ...formData,
+                            guestPhone: e.target.value,
+                          })
                         }
                         required
                       />
@@ -326,7 +713,10 @@ function BookingForm() {
                       placeholder="Any dietary requirements, accessibility needs, or special arrangements..."
                       value={formData.specialRequests}
                       onChange={(e) =>
-                        setFormData({ ...formData, specialRequests: e.target.value })
+                        setFormData({
+                          ...formData,
+                          specialRequests: e.target.value,
+                        })
                       }
                     />
                   </div>
@@ -339,213 +729,98 @@ function BookingForm() {
             </Card>
           </div>
 
-          {/* Booking Summary */}
+          {/* Right: Package Summary */}
           <div>
             <Card className="sticky top-24">
               <CardHeader>
                 <CardTitle>Booking Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Pandit Mode */}
-                {pandit ? (
-                  <>
-                    {/* Pandit Info */}
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-saffron/20 flex items-center justify-center flex-shrink-0">
-                        <User className="w-5 h-5 text-saffron" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-lg">{pandit.name}</p>
-                        <p className="text-sm text-saffron">{pandit.specialization}</p>
-                      </div>
-                    </div>
+                <div>
+                  <p className="font-semibold text-lg">{activePkg.name}</p>
+                  <p className="text-sm text-muted-foreground flex items-center mt-1">
+                    <Clock className="w-4 h-4 mr-1" />
+                    {activePkg.duration}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                    <Tag className="w-3 h-3" />
+                    {activePkg.category}
+                  </p>
+                </div>
 
-                    {/* Pandit Details */}
-                    <div className="border-t pt-4 space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Experience</span>
-                        <span className="font-medium">{pandit.experience}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Rating</span>
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="font-medium">{pandit.rating}</span>
-                          <span className="text-muted-foreground">
-                            ({pandit.reviewCount})
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+                <div>
+                  <p className="text-sm font-medium mb-1.5">Temples Visited</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {activePkg.temples.map((temple) => (
+                      <span
+                        key={temple}
+                        className="bg-saffron/10 text-saffron text-xs px-2 py-1 rounded-full"
+                      >
+                        {temple}
+                      </span>
+                    ))}
+                  </div>
+                </div>
 
-                    {/* Price */}
-                    <div className="border-t pt-4 space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          Consultation Fee
+                <div className="border-t pt-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      Price per person
+                    </span>
+                    {activePkg.discountPrice ? (
+                      <>
+                        <span className="text-muted-foreground line-through text-sm">
+                          NPR {activePkg.price.toLocaleString()}
                         </span>
-                        <span className="font-semibold">
-                          NPR {pandit.fee.toLocaleString()}
+                        <span className="font-semibold text-saffron">
+                          NPR {activePkg.discountPrice.toLocaleString()}
                         </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Passengers</span>
-                        <span className="font-medium">
-                          {formData.passengers}
-                        </span>
-                      </div>
-                    </div>
+                      </>
+                    ) : (
+                      <span className="font-semibold">
+                        NPR {activePkg.price.toLocaleString()}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Passengers</span>
+                    <span className="font-medium">{formData.passengers}</span>
+                  </div>
+                </div>
 
-                    {/* Total */}
-                    <div className="border-t pt-4">
-                      <div className="flex justify-between font-bold text-lg">
-                        <span>Total</span>
-                        <span className="text-saffron">
-                          NPR{" "}
-                          {(pandit.fee *
-                            parseInt(formData.passengers || "1")).toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
+                <div className="border-t pt-4">
+                  <div className="flex justify-between font-bold text-lg">
+                    <span>Total</span>
+                    <span className="text-saffron">
+                      NPR{" "}
+                      {(
+                        (activePkg.discountPrice || activePkg.price) *
+                        parseInt(formData.passengers || "1")
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
 
-                    {/* Included */}
-                    <div className="bg-muted/50 p-4 rounded-lg">
-                      <p className="text-sm font-medium mb-2 flex items-center gap-1.5">
-                        <Check className="w-4 h-4 text-success" />
-                        What&apos;s Included
-                      </p>
-                      <ul className="text-sm space-y-1.5">
-                        <li className="flex items-center gap-2">
-                          <Check className="w-3.5 h-3.5 text-success shrink-0" />
-                          <span className="text-muted-foreground">
-                            Online Video Consultation
-                          </span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <Check className="w-3.5 h-3.5 text-success shrink-0" />
-                          <span className="text-muted-foreground">
-                            Personalized Kundali Reading
-                          </span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <Check className="w-3.5 h-3.5 text-success shrink-0" />
-                          <span className="text-muted-foreground">
-                            Remedy & Puja Guidance
-                          </span>
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <Check className="w-3.5 h-3.5 text-success shrink-0" />
-                          <span className="text-muted-foreground">
-                            Follow-up Support
-                          </span>
-                        </li>
-                      </ul>
-                    </div>
-                  </>
-) : (
-                  /* Package Mode */
-                  <>
-                    {/* Package Name & Duration */}
-                    <div>
-                      <p className="font-semibold text-lg">{activePkg.name}</p>
-                      <p className="text-sm text-muted-foreground flex items-center mt-1">
-                        <Clock className="w-4 h-4 mr-1" />
-                        {activePkg.duration}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                        <Tag className="w-3 h-3" />
-                        {activePkg.category}
-                      </p>
-                    </div>
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <p className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-success" />
+                    What&apos;s Included
+                  </p>
+                  <ul className="text-sm space-y-1.5">
+                    {activePkg.includes.map((item) => (
+                      <li key={item} className="flex items-center gap-2">
+                        <Check className="w-3.5 h-3.5 text-success shrink-0" />
+                        <span className="text-muted-foreground">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-                    {/* Temples Visited */}
-                    <div>
-                      <p className="text-sm font-medium mb-1.5">
-                        Temples Visited
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {activePkg.temples.map((temple) => (
-                          <span
-                            key={temple}
-                            className="bg-saffron/10 text-saffron text-xs px-2 py-1 rounded-full"
-                          >
-                            {temple}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Pricing */}
-                    <div className="border-t pt-4 space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          Price per person
-                        </span>
-                        {activePkg.discountPrice ? (
-                          <>
-                            <span className="text-muted-foreground line-through text-sm">
-                              NPR {activePkg.price.toLocaleString()}
-                            </span>
-                            <span className="font-semibold text-saffron">
-                              NPR {activePkg.discountPrice.toLocaleString()}
-                            </span>
-                          </>
-                        ) : (
-                          <span className="font-semibold">
-                            NPR {activePkg.price.toLocaleString()}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          Passengers
-                        </span>
-                        <span className="font-medium">
-                          {formData.passengers}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Total */}
-                    <div className="border-t pt-4">
-                      <div className="flex justify-between font-bold text-lg">
-                        <span>Total</span>
-                        <span className="text-saffron">
-                          NPR{" "}
-                          {(
-                            (activePkg.discountPrice || activePkg.price) *
-                            parseInt(formData.passengers || "1")
-                          ).toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Whats Included */}
-                    <div className="bg-muted/50 p-4 rounded-lg">
-                      <p className="text-sm font-medium mb-2 flex items-center gap-1.5">
-                        <Check className="w-4 h-4 text-success" />
-                        What&apos;s Included
-                      </p>
-                      <ul className="text-sm space-y-1.5">
-                        {activePkg.includes.map((item) => (
-                          <li key={item} className="flex items-center gap-2">
-                            <Check className="w-3.5 h-3.5 text-success shrink-0" />
-                            <span className="text-muted-foreground">
-                              {item}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Description */}
-                    <div className="bg-white/60 p-3 rounded-lg border border-border/50">
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        {activePkg.description}
-                      </p>
-                    </div>
-                  </>
-                )}
+                <div className="bg-white/60 p-3 rounded-lg border border-border/50">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    {activePkg.description}
+                  </p>
+                </div>
 
                 <p className="text-xs text-muted-foreground text-center">
                   You won&apos;t be charged until we confirm your booking.
@@ -559,6 +834,29 @@ function BookingForm() {
   );
 }
 
+// ============ MAIN PAGE (inside Suspense) ============
+
+function BookingContent() {
+  const searchParams = useSearchParams();
+  const packageId = searchParams.get("package");
+  const panditId = searchParams.get("pandit");
+
+  const pkg = packageId
+    ? packages[packageId as keyof typeof packages] || null
+    : null;
+  const pandit = panditId
+    ? pandits[panditId as keyof typeof pandits] || null
+    : null;
+
+  const defaultPkg = packages["1"];
+
+  return pandit ? (
+    <AstrologerBookingForm pandit={pandit} />
+  ) : (
+    <PackageBookingForm pkg={pkg} defaultPkg={defaultPkg} />
+  );
+}
+
 export default function BookingPage() {
   return (
     <Suspense
@@ -568,7 +866,7 @@ export default function BookingPage() {
         </div>
       }
     >
-      <BookingForm />
+      <BookingContent />
     </Suspense>
   );
 }
